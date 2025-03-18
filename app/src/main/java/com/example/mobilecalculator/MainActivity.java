@@ -261,6 +261,10 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             String lastNum = getLastNum(formula);
+            if (lastNum == null) {
+                Toast.makeText(this, "Unknown error SignFlip", Toast.LENGTH_SHORT).show();
+                return;
+            }
             int lastNumberStartIndex = getLastNumStartIndex(formula);
             if (lastNum.startsWith("+")) {
                 formula = formula.substring(0, lastNumberStartIndex) + "-(-" + formula.substring(lastNumberStartIndex + 1);
@@ -270,6 +274,55 @@ public class MainActivity extends AppCompatActivity {
             }
             else {
                 formula = formula.substring(0, lastNumberStartIndex) + "-" + formula.substring(lastNumberStartIndex);
+            }
+        }
+
+        formulaView.setText(formula);
+    }
+
+    public boolean areParenthesisMatched(String formula) {
+        int openingBracesCount = 0;
+        int closingBracesCount = 0;
+
+        char lastBrace = 0;
+        for (int i = formula.length() - 1; i >= 0; --i) {
+            if (lastBrace == '(' && formula.charAt(i) == ')') {
+                // rightmost block of braces pairs is over
+                break;
+            }
+            else if (formula.charAt(i) == '(') {
+                openingBracesCount++;
+                lastBrace = '(';
+            }
+            else if (formula.charAt(i) == ')') {
+                closingBracesCount++;
+                lastBrace = ')';
+            }
+        }
+
+        return closingBracesCount == openingBracesCount;
+    }
+
+    public void onClick_ParenthesisInput(View v) {
+        var formula = formulaView.getText().toString();
+
+        if (formula.isEmpty()) {
+            formula = "(";
+            formulaView.setText(formula);
+            return;
+        }
+
+        char lastCharacter = formula.charAt(formula.length() - 1);
+
+        if (isOperationSymbol(lastCharacter) || lastCharacter == '(') {
+            formula += "(";
+        }
+        else {
+            if (areParenthesisMatched(formula)) {
+                formula += "*(";
+            }
+            else {
+                formula += ')';
             }
         }
 
