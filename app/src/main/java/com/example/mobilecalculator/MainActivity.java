@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
             formula += "*" + num;
         } else {
             String lastNum = getLastNum(formula);
-            Toast.makeText(this, lastNum, Toast.LENGTH_SHORT).show();
             if (formula.endsWith("0") && Objects.equals(lastNum, "0")) {
                 formula = formula.substring(0, formula.length() - 1) + num;
             }
@@ -331,5 +330,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClick_Clear(View v) {
         formulaView.setText("");
+    }
+
+    public void onClick_Backspace(View v) {
+        var formula = formulaView.getText().toString();
+        if (!formula.isEmpty()) {
+            formula = formula.substring(0, formula.length() - 1);
+            formulaView.setText(formula);
+        }
     }
 }
