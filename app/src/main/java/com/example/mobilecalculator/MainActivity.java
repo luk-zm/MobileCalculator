@@ -33,21 +33,23 @@ public class MainActivity extends AppCompatActivity {
         resultPreview = findViewById(R.id.resultPreview);
     }
 
-    public String getLastNum(String formula) {
-        String result = null;
+
+    static public int getLastNumStartIndex(String formula) {
         for (int i = formula.length() - 1; i >= 0; --i) {
             if (formula.charAt(i) == '*' || formula.charAt(i) == '/' || formula.charAt(i) == '(' || formula.charAt(i) == ')' || formula.charAt(i) == '%') {
-                result = formula.substring(i + 1);
-                break;
+                return i + 1;
             }
             if (i == 0)
-                return formula;
+                return 0;
             if (formula.charAt(i) == '+' || formula.charAt(i) == '-' ) {
-                result = formula.substring(i);
-                break;
+                return i;
             }
         }
-        return result;
+        return -1;
+    }
+    static public String getLastNum(String formula) {
+        int index = getLastNumStartIndex(formula);
+        return index >= 0 ? formula.substring(index) : null;
     }
 
     public void onClick_NumInput(View v) {
@@ -234,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
         var formula = formulaView.getText().toString();
 
         if (formula.isEmpty()) {
-            formula = "(-";
+            formula = "-";
             formulaView.setText(formula);
             return;
         }
@@ -242,30 +244,32 @@ public class MainActivity extends AppCompatActivity {
         char lastCharacter = formula.charAt(formula.length() - 1);
 
         if (lastCharacter == '/' || lastCharacter == '*' || lastCharacter == '+' || lastCharacter == '(') {
-            formula += "(-";
+            formula += "-";
         }
         else if (lastCharacter == '-') {
-            // if (formula.length() > 2 && formula.charAt(formula.length() - 2) == '(') {
-            if (formula.endsWith("(-")) {
-                formula = formula.substring(0, formula.length() - 2);
+            int penultimateIndex = formula.length() - 2;
+            if (penultimateIndex >= 0) {
+                char penultimateCharacter = formula.charAt(penultimateIndex);
+                if (isOperationSymbol(penultimateCharacter))
+                    formula = formula.substring(0, formula.length() - 1);
             }
-            else {
-                formula += "(-";
-            }
+            else
+                formula = formula.substring(0, formula.length() - 1) + "+";
         }
         else if (lastCharacter == '%' || lastCharacter == ')') {
-            formula += "*(-";
+            Toast.makeText(this, "Invalid", Toast.LENGTH_SHORT).show();
         }
         else {
             String lastNum = getLastNum(formula);
-            if (lastNum.charAt(0) == '+') {
-                formula += "*(-";
+            int lastNumberStartIndex = getLastNumStartIndex(formula);
+            if (lastNum.startsWith("+")) {
+                formula = formula.substring(0, lastNumberStartIndex) + "-(-" + formula.substring(lastNumberStartIndex + 1);
             }
-            else if (lastNum.charAt(0) == '-') {
-
+            else if (lastNum.startsWith("-")) {
+                formula = formula.substring(0, lastNumberStartIndex) + formula.substring(lastNumberStartIndex + 1);
             }
             else {
-
+                formula = formula.substring(0, lastNumberStartIndex) + "-" + formula.substring(lastNumberStartIndex);
             }
         }
 

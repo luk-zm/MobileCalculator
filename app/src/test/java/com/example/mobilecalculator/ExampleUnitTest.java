@@ -11,7 +11,22 @@ import static org.junit.Assert.*;
  */
 public class ExampleUnitTest {
     @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+    public void getLastNum_handlesNumbersWithSign() {
+        assertEquals("+456", MainActivity.getLastNum("764-(+456"));
+    }
+
+    @Test
+    public void getLastNum_handlesEmpty() {
+        assertNull(MainActivity.getLastNum(""));
+    }
+
+    @Test
+    public void getLastNum_handlesSingleNumbers() {
+        assertEquals("456", MainActivity.getLastNum("456"));
+    }
+
+    @Test
+    public void getLastNum_handlesDecimalNumbers() {
+        assertEquals("456.482", MainActivity.getLastNum("456.482"));
     }
 }
