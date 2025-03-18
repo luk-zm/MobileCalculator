@@ -52,39 +52,45 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClick_NumInput(View v) {
         Button b = (Button)v;
-        CharSequence formula = formulaView.getText();
-        if (formula.length() == 0) {
-            formulaView.setText(formulaView.getText().toString() + b.getText());
+        var num = b.getText().charAt(0);
+        var formula = formulaView.getText().toString();
+
+        if (formula.isEmpty()) {
+            formula += num;
         }
-        else if ((formula.charAt(formula.length() - 1) == '%' || formula.charAt(formula.length() - 1) == ')')){
-            formulaView.setText(formulaView.getText().toString() + "*" + b.getText());
+        else if (formula.endsWith("%") || formula.endsWith(")")){
+            formula += "*" + num;
         } else {
-            String lastNum = getLastNum(formula.toString());
+            String lastNum = getLastNum(formula);
             Toast.makeText(this, lastNum, Toast.LENGTH_SHORT).show();
-            if (formula.charAt(formula.length() - 1) == '0' && Objects.equals(lastNum, "0")) {
-                formulaView.setText(formulaView.getText().toString().substring(0, formula.length() - 1) + b.getText());
+            if (formula.endsWith("0") && Objects.equals(lastNum, "0")) {
+                formula = formula.substring(0, formula.length() - 1) + num;
             }
             else {
-                formulaView.setText(formulaView.getText().toString() + b.getText());
+                formula += num;
             }
         }
+
+        formulaView.setText(formula);
     }
 
     public void onClick_PercentInput(View v) {
-        Button b = (Button)v;
-        CharSequence formula = formulaView.getText();
-        if (formula.length() == 0) {
+        var formula = formulaView.getText().toString();
+
+        if (formula.isEmpty()) {
             Toast.makeText(this, "Invalid expression", Toast.LENGTH_SHORT).show();
         }
         else {
             char lastChar = formula.charAt(formula.length() - 1);
-            if (isOperationSymbol(lastChar) || lastChar == '(' || lastChar == '%') {
+            if (isOperationSymbol(lastChar) || formula.endsWith("(") || formula.endsWith("%")) {
                 Toast.makeText(this, "Invalid expression", Toast.LENGTH_SHORT).show();
             }
             else {
-                formulaView.setText(formulaView.getText().toString() + b.getText());
+                formula += '%';
             }
         }
+
+        formulaView.setText(formula);
     }
 
     public boolean isOperationSymbol(char c) {
@@ -93,44 +99,53 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClick_MulDivInput(View v) {
         Button b = (Button)v;
-        CharSequence formula = formulaView.getText();
-        if (formula.length() != 0) {
+        char sign = b.getText().charAt(0);
+        var formula = formulaView.getText().toString();
+
+        if (!formula.isEmpty()) {
             char lastChar = formula.charAt(formula.length() - 1);
             if (isOperationSymbol(lastChar)) {
-                if (lastChar == '(' || lastChar == b.getText().charAt(0)) {
+                if (lastChar == '(' || lastChar == sign) {
                     Toast.makeText(this, "Invalid expression", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    formulaView.setText(formulaView.getText().toString().substring(0, formula.length() - 1) + b.getText());
+                    formula = formula.substring(0, formula.length() - 1) + sign;
                 }
             }
             else {
-                formulaView.setText(formulaView.getText().toString() + b.getText());
+                formula += sign;
             }
         } else {
             Toast.makeText(this, "Invalid expression", Toast.LENGTH_SHORT).show();
         }
+
+        formulaView.setText(formula);
     }
 
     public void onClick_AddSubInput(View v) {
         Button b = (Button)v;
-        CharSequence formula = formulaView.getText();
-        if (formula.length() != 0) {
+
+        char sign = b.getText().charAt(0);
+        var formula = formulaView.getText().toString();
+
+        if (!formula.isEmpty()) {
             char lastChar = formula.charAt(formula.length() - 1);
             if (isOperationSymbol(lastChar)) {
-                if (lastChar == b.getText().charAt(0)) {
+                if (lastChar == sign) {
                     Toast.makeText(this, "Invalid expression", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    formulaView.setText(formulaView.getText().toString().substring(0, formula.length() - 1) + b.getText());
+                    formula = formula.substring(0, formula.length() - 1) + sign;
                 }
             }
             else {
-                formulaView.setText(formulaView.getText().toString() + b.getText());
+                formula += sign;
             }
         } else {
             Toast.makeText(this, "Invalid expression", Toast.LENGTH_SHORT).show();
         }
+
+        formulaView.setText(formula);
     }
 
     public boolean isNumber(char c) {
@@ -139,13 +154,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClick_decPointInput(View v) {
-        Button b = (Button) v;
-        CharSequence formula = formulaView.getText();
-        if (formula.length() == 0) {
-            formulaView.setText("0.");
+        var formula = formulaView.getText().toString();
+
+        if (formula.isEmpty()) {
+            formula = "0.";
         } else {
             char lastChar = formula.charAt(formula.length() - 1);
-            if (lastChar == b.getText().charAt(0)) {
+            if (lastChar == '.') {
                 Toast.makeText(this, "Invalid expression", Toast.LENGTH_SHORT).show();
             }
             else if (isNumber(lastChar)) {
@@ -160,28 +175,30 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 if (onlyOneDot)
-                    formulaView.setText(formulaView.getText().toString() + ".");
+                    formula += ".";
             }
             else if (lastChar == '%' || lastChar == ')') {
-                formulaView.setText(formulaView.getText().toString() + "*0.");
+                formula += "*0.";
             }
             else /* if (isOperationSymbol(lastChar)) */ {
-                formulaView.setText(formulaView.getText().toString() + "0.");
+                formula += "0.";
             }
         }
+
+        formulaView.setText(formula);
     }
 
     public void onClick_inputZero(View v) {
-        Button b = (Button) v;
-        CharSequence formula = formulaView.getText();
-        if (formula.length() == 0) {
-            formulaView.setText(b.getText());
+        String formula = formulaView.getText().toString();
+
+        if (formula.isEmpty()) {
+            formulaView.setText("0");
             return;
         }
 
         char lastCharacter = formula.charAt(formula.length() - 1);
         if (lastCharacter == '%' || lastCharacter == ')'){
-            formulaView.setText(formulaView.getText().toString() + "*" + b.getText());
+            formula += "*0";
         } else {
             boolean isFraction = false;
             boolean isSingleZero = false;
@@ -199,29 +216,60 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 if (isFraction || isSingleZero) {
-                    formulaView.setText(formulaView.getText().toString() + b.getText());
+                    formula += '0';
                 }
                 else {
                     Toast.makeText(this, "Not a fraction", Toast.LENGTH_SHORT).show();
                 }
             }
             else {
-                formulaView.setText(formulaView.getText().toString() + b.getText());
+                formula += '0';
             }
         }
 
+        formulaView.setText(formula);
     }
 
     public void onClick_SignFlip(View v) {
-        Button b = (Button) v;
-        CharSequence formula = formulaView.getText();
-        if (formula.length() == 0) {
-            formulaView.setText("(-");
+        var formula = formulaView.getText().toString();
+
+        if (formula.isEmpty()) {
+            formula = "(-";
+            formulaView.setText(formula);
             return;
         }
 
         char lastCharacter = formula.charAt(formula.length() - 1);
 
+        if (lastCharacter == '/' || lastCharacter == '*' || lastCharacter == '+' || lastCharacter == '(') {
+            formula += "(-";
+        }
+        else if (lastCharacter == '-') {
+            // if (formula.length() > 2 && formula.charAt(formula.length() - 2) == '(') {
+            if (formula.endsWith("(-")) {
+                formula = formula.substring(0, formula.length() - 2);
+            }
+            else {
+                formula += "(-";
+            }
+        }
+        else if (lastCharacter == '%' || lastCharacter == ')') {
+            formula += "*(-";
+        }
+        else {
+            String lastNum = getLastNum(formula);
+            if (lastNum.charAt(0) == '+') {
+                formula += "*(-";
+            }
+            else if (lastNum.charAt(0) == '-') {
+
+            }
+            else {
+
+            }
+        }
+
+        formulaView.setText(formula);
     }
 
     public void onClick_Clear(View v) {
