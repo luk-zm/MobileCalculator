@@ -46,7 +46,7 @@
                 android:id="@+id/percentButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="onInputClick"
+                android:onClick="onClick_PercentInput"
                 android:text="%" />
 
             <Button
@@ -172,7 +172,7 @@
                 android:id="@+id/num0Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="onClick_NumInput"
+                android:onClick="onClick_inputZero"
                 android:text="0" />
 
             <Button
