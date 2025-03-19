@@ -104,14 +104,12 @@ public class Evaluator {
         boolean isSub = false;
         boolean isPercent = false;
         boolean isFlip = false;
-        boolean isSubexpression = false;
         int mulFoundIndex = 0;
         int divFoundIndex = 0;
         int addFoundIndex = 0;
         int subFoundIndex = 0;
         int percentFoundIndex = 0;
         int flipFoundIndex = 0;
-        int subexpressionFoundIndex = 0;
 
         double result = 0;
         for (int i = 0; i < tokens.size(); ++i) {
@@ -139,10 +137,6 @@ public class Evaluator {
             else if (currentToken == TokenType.flip) {
                 isFlip = true;
                 flipFoundIndex = i;
-            }
-            else if (currentToken == TokenType.subexpression) {
-                isSubexpression = true;
-                subexpressionFoundIndex = i;
             }
         }
 
@@ -178,10 +172,6 @@ public class Evaluator {
         else if (isFlip) {
             var arg1 = evalHelper(tokens.subList(flipFoundIndex + 1, tokens.size()));
             result = -arg1;
-        }
-        else if (isSubexpression) {
-            List<Token> subexpressionTokens = tokenize(tokens.get(subexpressionFoundIndex).content);
-            return evalHelper(subexpressionTokens);
         }
 
         return result;
