@@ -73,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         formulaView.setText(formula);
+
+        resultPreview.setText(Double.toString(Evaluator.evaluate(formula)));
     }
 
     public void onClick_PercentInput(View v) {
@@ -92,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         formulaView.setText(formula);
+
+        resultPreview.setText(Double.toString(Evaluator.evaluate(formula)));
     }
 
     public boolean isOperationSymbol(char c) {
@@ -121,6 +125,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         formulaView.setText(formula);
+
+        resultPreview.setText(Double.toString(Evaluator.evaluate(formula)));
     }
 
     public void onClick_AddSubInput(View v) {
@@ -147,6 +153,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         formulaView.setText(formula);
+
+        resultPreview.setText(Double.toString(Evaluator.evaluate(formula)));
     }
 
     public boolean isNumber(char c) {
@@ -187,6 +195,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         formulaView.setText(formula);
+
+        resultPreview.setText(Double.toString(Evaluator.evaluate(formula)));
     }
 
     public void onClick_inputZero(View v) {
@@ -229,6 +239,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         formulaView.setText(formula);
+
+        resultPreview.setText(Double.toString(Evaluator.evaluate(formula)));
     }
 
     public void onClick_SignFlip(View v) {
@@ -277,6 +289,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         formulaView.setText(formula);
+
+        resultPreview.setText(Double.toString(Evaluator.evaluate(formula)));
     }
 
     public boolean areParenthesisMatched(String formula) {
@@ -326,8 +340,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         formulaView.setText(formula);
+
+        resultPreview.setText(Double.toString(Evaluator.evaluate(formula)));
     }
 
+    public void onClick_Equals(View v) {
+        double res = Evaluator.evaluate(formulaView.getText().toString());
+        formulaView.setText(Double.toString(res));
+
+        resultPreview.setText("");
+    }
     public void onClick_Clear(View v) {
         formulaView.setText("");
     }
@@ -338,5 +360,7 @@ public class MainActivity extends AppCompatActivity {
             formula = formula.substring(0, formula.length() - 1);
             formulaView.setText(formula);
         }
+
+        resultPreview.setText(Double.toString(Evaluator.evaluate(formula)));
     }
 }
