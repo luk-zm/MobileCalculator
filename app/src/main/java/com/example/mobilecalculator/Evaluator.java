@@ -6,14 +6,13 @@ import java.util.List;
 public class Evaluator {
     private enum TokenType {
         number,
-        openParen,
-        closeParen,
         div,
         mul,
         add,
         sub,
         percent,
-        flip
+        flip,
+        subexpression
     }
     static private class Token {
         public Token(TokenType t, String str) {
@@ -41,10 +40,21 @@ public class Evaluator {
                 i = numEndIndex - 1;
             }
             else if (curr == '(') {
-                result.add(new Token(TokenType.openParen, "("));
-            }
-            else if (curr == ')') {
-                result.add(new Token(TokenType.closeParen, ")"));
+                i++;
+                int beginIndex = i;
+                int openBraceCount = 1;
+                int closeBraceCount = 0;
+                for (;i < formula.length(); ++i) {
+                    curr = formula.charAt(i);
+                    if (curr == '(')
+                        openBraceCount++;
+                    else if (curr == ')')
+                        closeBraceCount++;
+
+                    if (openBraceCount == closeBraceCount)
+                        break;
+                }
+                result.add(new Token(TokenType.subexpression, formula.substring(beginIndex, i)));
             }
             else if (curr == '%') {
                 result.add(new Token(TokenType.percent, "%"));
@@ -78,6 +88,10 @@ public class Evaluator {
             if (tokens.get(0).type == TokenType.number) {
                 return Double.parseDouble(tokens.get(0).content);
             }
+            else if (tokens.get(0).type == TokenType.subexpression) {
+                List<Token> subexpressionTokens = tokenize(tokens.get(0).content);
+                return evalHelper(subexpressionTokens);
+            }
             else {
                 // TODO handle error
                 return 0;
@@ -90,12 +104,14 @@ public class Evaluator {
         boolean isSub = false;
         boolean isPercent = false;
         boolean isFlip = false;
+        boolean isSubexpression = false;
         int mulFoundIndex = 0;
         int divFoundIndex = 0;
         int addFoundIndex = 0;
         int subFoundIndex = 0;
         int percentFoundIndex = 0;
         int flipFoundIndex = 0;
+        int subexpressionFoundIndex = 0;
 
         double result = 0;
         for (int i = 0; i < tokens.size(); ++i) {
@@ -116,10 +132,6 @@ public class Evaluator {
                 isSub = true;
                 subFoundIndex = i;
             }
-            else if (currentToken == TokenType.openParen) {
-                while (i < tokens.size() && tokens.get(i).type != TokenType.closeParen)
-                    i++;
-            }
             else if (currentToken == TokenType.percent) {
                 isPercent = true;
                 percentFoundIndex = i;
@@ -127,6 +139,10 @@ public class Evaluator {
             else if (currentToken == TokenType.flip) {
                 isFlip = true;
                 flipFoundIndex = i;
+            }
+            else if (currentToken == TokenType.subexpression) {
+                isSubexpression = true;
+                subexpressionFoundIndex = i;
             }
         }
 
@@ -163,11 +179,9 @@ public class Evaluator {
             var arg1 = evalHelper(tokens.subList(flipFoundIndex + 1, tokens.size()));
             result = -arg1;
         }
-        else if (tokens.get(0).type == TokenType.openParen) {
-            if (tokens.get(tokens.size() - 1).type == TokenType.closeParen) {
-                return evalHelper(tokens.subList(1, tokens.size() - 1));
-            }
-            return evalHelper(tokens.subList(1, tokens.size()));
+        else if (isSubexpression) {
+            List<Token> subexpressionTokens = tokenize(tokens.get(subexpressionFoundIndex).content);
+            return evalHelper(subexpressionTokens);
         }
 
         return result;
