@@ -11,7 +11,7 @@
     <TextView
         android:id="@+id/formulaView"
         android:layout_width="match_parent"
-        android:layout_height="264dp"
+        android:layout_height="280dp"
         android:textAlignment="textEnd"
         android:textSize="34sp" />
 
@@ -19,7 +19,8 @@
         android:id="@+id/resultPreview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="textEnd" />
+        android:textAlignment="textEnd"
+        android:textSize="20sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,100 +49,130 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:minHeight="75dp"
+            android:paddingLeft="5dp">
 
             <Button
                 android:id="@+id/clearButton"
                 style="@style/Widget.Material3.Button"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_Clear"
                 android:text="C" />
 
             <Button
                 android:id="@+id/parenthButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_ParenthesisInput"
                 android:text="()" />
 
             <Button
                 android:id="@+id/percentButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_PercentInput"
                 android:text="%" />
 
             <Button
                 android:id="@+id/divButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_MulDivInput"
                 android:text="/" />
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:minHeight="75dp"
+            android:paddingLeft="5dp">
 
             <Button
                 android:id="@+id/num7Button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_NumInput"
                 android:text="7" />
 
             <Button
                 android:id="@+id/num8Button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_NumInput"
                 android:text="8" />
 
             <Button
                 android:id="@+id/num9Button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_NumInput"
                 android:text="9" />
 
             <Button
                 android:id="@+id/mulButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_MulDivInput"
                 android:text="*" />
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:minHeight="75dp"
+            android:paddingLeft="5dp">
 
             <Button
                 android:id="@+id/num4Button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_NumInput"
                 android:text="4" />
 
             <Button
                 android:id="@+id/num5Button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_NumInput"
                 android:text="5" />
 
             <Button
                 android:id="@+id/num6Button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_NumInput"
                 android:text="6" />
 
             <Button
                 android:id="@+id/subButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_AddSubInput"
                 android:text="-" />
 
@@ -149,33 +180,43 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:minHeight="75dp"
+            android:paddingLeft="5dp">
 
             <Button
                 android:id="@+id/num1Button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_NumInput"
                 android:text="1" />
 
             <Button
                 android:id="@+id/num2Button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_NumInput"
                 android:text="2" />
 
             <Button
                 android:id="@+id/num3Button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_NumInput"
                 android:text="3" />
 
             <Button
                 android:id="@+id/addButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_AddSubInput"
                 android:text="+" />
 
@@ -183,33 +224,43 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:minHeight="75dp"
+            android:paddingLeft="5dp">
 
             <Button
                 android:id="@+id/flipSignButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_SignFlip"
                 android:text="+/-" />
 
             <Button
                 android:id="@+id/num0Button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_inputZero"
                 android:text="0" />
 
             <Button
                 android:id="@+id/decPointButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_decPointInput"
                 android:text="." />
 
             <Button
                 android:id="@+id/equalsButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
                 android:onClick="onClick_Equals"
                 android:text="=" />
         </TableRow>

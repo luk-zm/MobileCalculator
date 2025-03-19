@@ -351,6 +351,7 @@ public class MainActivity extends AppCompatActivity {
         resultPreview.setText("");
     }
     public void onClick_Clear(View v) {
+        resultPreview.setText("");
         formulaView.setText("");
     }
 

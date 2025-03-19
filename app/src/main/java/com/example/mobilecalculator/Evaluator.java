@@ -12,7 +12,8 @@ public class Evaluator {
         mul,
         add,
         sub,
-        percent
+        percent,
+        flip
     }
     static private class Token {
         public Token(TokenType t, String str) {
@@ -58,7 +59,11 @@ public class Evaluator {
                 result.add(new Token(TokenType.add, "+"));
             }
             else if (curr == '-') {
-                result.add(new Token(TokenType.sub, "-"));
+                if (result.isEmpty() || result.get(result.size() - 1).type != TokenType.number)
+                    result.add(new Token(TokenType.flip, "-"));
+                else
+                    result.add(new Token(TokenType.sub, "-"));
+
             }
 
         }
@@ -79,64 +84,90 @@ public class Evaluator {
             }
         }
 
-        if (tokens.get(0).type == TokenType.openParen) {
-            if (tokens.get(tokens.size() - 1).type == TokenType.closeParen) {
-                return evalHelper(tokens.subList(1, tokens.size() - 1));
-            }
-            return evalHelper(tokens.subList(1, tokens.size()));
-        }
-
         boolean isMul = false;
         boolean isDiv = false;
         boolean isAdd = false;
         boolean isSub = false;
-        int foundIndex = 0;
+        boolean isPercent = false;
+        boolean isFlip = false;
+        int mulFoundIndex = 0;
+        int divFoundIndex = 0;
+        int addFoundIndex = 0;
+        int subFoundIndex = 0;
+        int percentFoundIndex = 0;
+        int flipFoundIndex = 0;
 
         double result = 0;
         for (int i = 0; i < tokens.size(); ++i) {
             var currentToken = tokens.get(i).type;
             if (currentToken == TokenType.mul) {
                 isMul = true;
-                foundIndex = i;
+                mulFoundIndex = i;
             }
             else if (currentToken == TokenType.div) {
                 isDiv = true;
-                foundIndex = i;
+                divFoundIndex = i;
             }
             else if (currentToken == TokenType.add) {
                 isAdd = true;
-                foundIndex = i;
-                break;
+                addFoundIndex = i;
             }
             else if (currentToken == TokenType.sub) {
                 isSub = true;
-                foundIndex = i;
-                break;
+                subFoundIndex = i;
             }
             else if (currentToken == TokenType.openParen) {
                 while (i < tokens.size() && tokens.get(i).type != TokenType.closeParen)
                     i++;
             }
+            else if (currentToken == TokenType.percent) {
+                isPercent = true;
+                percentFoundIndex = i;
+            }
+            else if (currentToken == TokenType.flip) {
+                isFlip = true;
+                flipFoundIndex = i;
+            }
         }
 
-        var arg1 = evalHelper(tokens.subList(0, foundIndex));
-        var arg2 = evalHelper(tokens.subList(foundIndex + 1, tokens.size()));
-
         if(isAdd) {
+            var arg1 = evalHelper(tokens.subList(0, addFoundIndex));
+            var arg2 = evalHelper(tokens.subList(addFoundIndex + 1, tokens.size()));
             result = arg1 + arg2;
         }
         else if(isSub) {
+            var arg1 = evalHelper(tokens.subList(0, subFoundIndex));
+            var arg2 = evalHelper(tokens.subList(subFoundIndex + 1, tokens.size()));
             result = arg1 - arg2;
         }
         else if (isMul) {
+            var arg1 = evalHelper(tokens.subList(0, mulFoundIndex));
+            var arg2 = evalHelper(tokens.subList(mulFoundIndex + 1, tokens.size()));
             result = arg1 * arg2;
         }
         else if (isDiv) {
+            var arg1 = evalHelper(tokens.subList(0, divFoundIndex));
+            var arg2 = evalHelper(tokens.subList(divFoundIndex + 1, tokens.size()));
             if (arg2 == 0) {
-                throw new IllegalArgumentException("Divide by zero error");
+                arg2 = 1;
+                // throw new IllegalArgumentException("Divide by zero error");
             }
             result = arg1 / arg2;
 
+        }
+        else if (isPercent) {
+            var arg1 = evalHelper(tokens.subList(0, percentFoundIndex));
+            result = arg1 * 0.01;
+        }
+        else if (isFlip) {
+            var arg1 = evalHelper(tokens.subList(flipFoundIndex + 1, tokens.size()));
+            result = -arg1;
+        }
+        else if (tokens.get(0).type == TokenType.openParen) {
+            if (tokens.get(tokens.size() - 1).type == TokenType.closeParen) {
+                return evalHelper(tokens.subList(1, tokens.size() - 1));
+            }
+            return evalHelper(tokens.subList(1, tokens.size()));
         }
 
         return result;
