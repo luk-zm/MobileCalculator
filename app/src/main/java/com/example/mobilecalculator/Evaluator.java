@@ -12,7 +12,8 @@ public class Evaluator {
         sub,
         percent,
         flip,
-        subexpression
+        openBrace,
+        closeBrace
     }
     static private class Token {
         public Token(TokenType t, String str) {
@@ -40,21 +41,10 @@ public class Evaluator {
                 i = numEndIndex - 1;
             }
             else if (curr == '(') {
-                i++;
-                int beginIndex = i;
-                int openBraceCount = 1;
-                int closeBraceCount = 0;
-                for (;i < formula.length(); ++i) {
-                    curr = formula.charAt(i);
-                    if (curr == '(')
-                        openBraceCount++;
-                    else if (curr == ')')
-                        closeBraceCount++;
-
-                    if (openBraceCount == closeBraceCount)
-                        break;
-                }
-                result.add(new Token(TokenType.subexpression, formula.substring(beginIndex, i)));
+                result.add(new Token(TokenType.openBrace, "("));
+            }
+            else if (curr == ')') {
+                result.add(new Token(TokenType.closeBrace, ")"));
             }
             else if (curr == '%') {
                 result.add(new Token(TokenType.percent, "%"));
@@ -88,10 +78,6 @@ public class Evaluator {
             if (tokens.get(0).type == TokenType.number) {
                 return Double.parseDouble(tokens.get(0).content);
             }
-            else if (tokens.get(0).type == TokenType.subexpression) {
-                List<Token> subexpressionTokens = tokenize(tokens.get(0).content);
-                return evalHelper(subexpressionTokens);
-            }
             else {
                 // TODO handle error
                 return 0;
@@ -104,12 +90,15 @@ public class Evaluator {
         boolean isSub = false;
         boolean isPercent = false;
         boolean isFlip = false;
+        boolean isSubexpression = false;
         int mulFoundIndex = 0;
         int divFoundIndex = 0;
         int addFoundIndex = 0;
         int subFoundIndex = 0;
         int percentFoundIndex = 0;
         int flipFoundIndex = 0;
+        int subexpressionStartIndex = 0;
+        int subexpressionEndIndex = 0;
 
         double result = 0;
         for (int i = 0; i < tokens.size(); ++i) {
@@ -137,6 +126,26 @@ public class Evaluator {
             else if (currentToken == TokenType.flip) {
                 isFlip = true;
                 flipFoundIndex = i;
+            }
+            else if (currentToken == TokenType.openBrace) {
+                isSubexpression = true;
+                i++;
+                int beginIndex = i;
+                int openBraceCount = 1;
+                int closeBraceCount = 0;
+                for (;i < tokens.size(); ++i) {
+                    Token curr = tokens.get(i);
+                    if (curr.type == TokenType.openBrace)
+                        openBraceCount++;
+                    else if (curr.type == TokenType.closeBrace)
+                        closeBraceCount++;
+
+                    if (openBraceCount == closeBraceCount)
+                        break;
+                }
+
+                subexpressionStartIndex = beginIndex;
+                subexpressionEndIndex = i;
             }
         }
 
@@ -172,6 +181,9 @@ public class Evaluator {
         else if (isFlip) {
             var arg1 = evalHelper(tokens.subList(flipFoundIndex + 1, tokens.size()));
             result = -arg1;
+        }
+        else if (isSubexpression) {
+            result = evalHelper(tokens.subList(subexpressionStartIndex, subexpressionEndIndex));
         }
 
         return result;
