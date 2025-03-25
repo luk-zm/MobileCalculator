@@ -15,11 +15,13 @@ public class Evaluator {
         openBrace,
         closeBrace
     }
-    static private class Token {
+
+    private static class Token {
         public Token(TokenType t, String str) {
             this.type = t;
             this.content = str;
         }
+
         public TokenType type;
         public String content;
     }
@@ -28,57 +30,47 @@ public class Evaluator {
         return c >= '0' && c <= '9';
     }
 
-    static private List<Token> tokenize(String formula) {
+    private static List<Token> tokenize(String formula) {
         var result = new ArrayList<Token>();
         for (int i = 0; i < formula.length(); ++i) {
             char curr = formula.charAt(i);
             if (isNumber(curr)) {
                 int numEndIndex = i + 1;
-                while (numEndIndex < formula.length() && (isNumber(formula.charAt(numEndIndex)) || formula.charAt(numEndIndex) == '.')) {
+                while (numEndIndex < formula.length()
+                        && (isNumber(formula.charAt(numEndIndex)) || formula.charAt(numEndIndex) == '.')) {
                     numEndIndex++;
                 }
                 result.add(new Token(TokenType.number, formula.substring(i, numEndIndex)));
                 i = numEndIndex - 1;
-            }
-            else if (curr == '(') {
+            } else if (curr == '(') {
                 result.add(new Token(TokenType.openBrace, "("));
-            }
-            else if (curr == ')') {
+            } else if (curr == ')') {
                 result.add(new Token(TokenType.closeBrace, ")"));
-            }
-            else if (curr == '%') {
+            } else if (curr == '%') {
                 result.add(new Token(TokenType.percent, "%"));
-            }
-            else if (curr == '*') {
+            } else if (curr == '*') {
                 result.add(new Token(TokenType.mul, "*"));
-            }
-            else if (curr == '/') {
+            } else if (curr == '/') {
                 result.add(new Token(TokenType.div, "/"));
-            }
-            else if (curr == '+') {
+            } else if (curr == '+') {
                 result.add(new Token(TokenType.add, "+"));
-            }
-            else if (curr == '-') {
+            } else if (curr == '-') {
                 if (result.isEmpty() || result.get(result.size() - 1).type != TokenType.number)
                     result.add(new Token(TokenType.flip, "-"));
-                else
-                    result.add(new Token(TokenType.sub, "-"));
-
+                else result.add(new Token(TokenType.sub, "-"));
             }
-
         }
         return result;
     }
 
-    static private double evalHelper(List<Token> tokens) {
+    private static double evalHelper(List<Token> tokens) {
         if (tokens.isEmpty()) {
             return 0;
         }
         if (tokens.size() == 1) {
             if (tokens.get(0).type == TokenType.number) {
                 return Double.parseDouble(tokens.get(0).content);
-            }
-            else {
+            } else {
                 // TODO handle error
                 return 0;
             }
@@ -106,42 +98,33 @@ public class Evaluator {
             if (currentToken == TokenType.mul) {
                 isMul = true;
                 mulFoundIndex = i;
-            }
-            else if (currentToken == TokenType.div) {
+            } else if (currentToken == TokenType.div) {
                 isDiv = true;
                 divFoundIndex = i;
-            }
-            else if (currentToken == TokenType.add) {
+            } else if (currentToken == TokenType.add) {
                 isAdd = true;
                 addFoundIndex = i;
-            }
-            else if (currentToken == TokenType.sub) {
+            } else if (currentToken == TokenType.sub) {
                 isSub = true;
                 subFoundIndex = i;
-            }
-            else if (currentToken == TokenType.percent) {
+            } else if (currentToken == TokenType.percent) {
                 isPercent = true;
                 percentFoundIndex = i;
-            }
-            else if (currentToken == TokenType.flip) {
+            } else if (currentToken == TokenType.flip) {
                 isFlip = true;
                 flipFoundIndex = i;
-            }
-            else if (currentToken == TokenType.openBrace) {
+            } else if (currentToken == TokenType.openBrace) {
                 isSubexpression = true;
                 i++;
                 int beginIndex = i;
                 int openBraceCount = 1;
                 int closeBraceCount = 0;
-                for (;i < tokens.size(); ++i) {
+                for (; i < tokens.size(); ++i) {
                     Token curr = tokens.get(i);
-                    if (curr.type == TokenType.openBrace)
-                        openBraceCount++;
-                    else if (curr.type == TokenType.closeBrace)
-                        closeBraceCount++;
+                    if (curr.type == TokenType.openBrace) openBraceCount++;
+                    else if (curr.type == TokenType.closeBrace) closeBraceCount++;
 
-                    if (openBraceCount == closeBraceCount)
-                        break;
+                    if (openBraceCount == closeBraceCount) break;
                 }
 
                 subexpressionStartIndex = beginIndex;
@@ -149,22 +132,19 @@ public class Evaluator {
             }
         }
 
-        if(isAdd) {
+        if (isAdd) {
             var arg1 = evalHelper(tokens.subList(0, addFoundIndex));
             var arg2 = evalHelper(tokens.subList(addFoundIndex + 1, tokens.size()));
             result = arg1 + arg2;
-        }
-        else if(isSub) {
+        } else if (isSub) {
             var arg1 = evalHelper(tokens.subList(0, subFoundIndex));
             var arg2 = evalHelper(tokens.subList(subFoundIndex + 1, tokens.size()));
             result = arg1 - arg2;
-        }
-        else if (isMul) {
+        } else if (isMul) {
             var arg1 = evalHelper(tokens.subList(0, mulFoundIndex));
             var arg2 = evalHelper(tokens.subList(mulFoundIndex + 1, tokens.size()));
             result = arg1 * arg2;
-        }
-        else if (isDiv) {
+        } else if (isDiv) {
             var arg1 = evalHelper(tokens.subList(0, divFoundIndex));
             var arg2 = evalHelper(tokens.subList(divFoundIndex + 1, tokens.size()));
             if (arg2 == 0) {
@@ -173,23 +153,20 @@ public class Evaluator {
             }
             result = arg1 / arg2;
 
-        }
-        else if (isPercent) {
+        } else if (isPercent) {
             var arg1 = evalHelper(tokens.subList(0, percentFoundIndex));
             result = arg1 * 0.01;
-        }
-        else if (isFlip) {
+        } else if (isFlip) {
             var arg1 = evalHelper(tokens.subList(flipFoundIndex + 1, tokens.size()));
             result = -arg1;
-        }
-        else if (isSubexpression) {
+        } else if (isSubexpression) {
             result = evalHelper(tokens.subList(subexpressionStartIndex, subexpressionEndIndex));
         }
 
         return result;
     }
 
-    static public double evaluate(String formula) {
+    public static double evaluate(String formula) {
         List<Token> tokens = tokenize(formula);
 
         return evalHelper(tokens);
