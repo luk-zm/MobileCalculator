@@ -2,11 +2,14 @@ package com.example.mobilecalculator;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -18,6 +21,9 @@ public class MainActivity extends AppCompatActivity {
 
     public TextView formulaView;
     public TextView resultPreview;
+    public Spinner historySpinner;
+    public String[] history;
+    public int historyCurrentIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +37,35 @@ public class MainActivity extends AppCompatActivity {
         });
         formulaView = findViewById(R.id.formulaView);
         resultPreview = findViewById(R.id.resultPreview);
+        historySpinner = findViewById(R.id.historySpinner);
+        history = new String[20];
+        historyCurrentIndex = 0;
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, history);
+        historySpinner.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("formula", formulaView.getText().toString());
+        outState.putSerializable("resPreview", resultPreview.getText().toString());
+        outState.putSerializable("history", history);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        @SuppressWarnings("unchecked")
+        String formula = (String)savedInstanceState.getSerializable("formula");
+        if (formula != null)
+            formulaView.setText(formula);
+        String resPreview = (String)savedInstanceState.getSerializable("resPreview");
+        if (resPreview != null)
+            resultPreview.setText(resPreview);
+        String[] historyLoad = (String[])savedInstanceState.getSerializable("history");
+        if (historyLoad != null) {
+            System.arraycopy(historyLoad, 0, history, 0, history.length);
+        }
     }
 
 
@@ -345,11 +380,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClick_Equals(View v) {
-        double res = Evaluator.evaluate(formulaView.getText().toString());
-        formulaView.setText(Double.toString(res));
+        String formula = formulaView.getText().toString();
+        double res = Evaluator.evaluate(formula);
+        String resString = Double.toString(res);
+
+        for (int i = history.length - 1; i > 0; --i) {
+            history[i] = history[i - 1];
+        }
+        history[0] = formula + "=" + resString;
+        formulaView.setText(resString);
 
         resultPreview.setText("");
     }
+
     public void onClick_Clear(View v) {
         resultPreview.setText("");
         formulaView.setText("");
